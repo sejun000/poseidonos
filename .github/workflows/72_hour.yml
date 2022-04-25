@@ -2,8 +2,8 @@
 name: M8-72H_VM_Test
 
 on:
-  schedule:
-    - cron: '0 1 * * MON-FRI'
+  push:
+    branches: [ test/* ]
 
   workflow_dispatch:
     inputs:
@@ -22,7 +22,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Make Dashboard link for workflow 
       run: |
-        POS_WORKING_DIR=${{github.workspace}} GA_COMMIT_HASH=${{github.sha}} GA_WORKFLOW=${{github.workflow}} GRAFANA_DASHBOARD="${{secrets.GRAFANA_GITHUB_ACTION_DASHBAORD_LINK}}" bash ${{github.workspace}}/.github/workflows/script/setup_dashboard.sh
+        ESTIMATED_EXECUTION_TIME=$((2*60*60)) POS_WORKING_DIR=${{github.workspace}} GA_COMMIT_HASH=${{github.sha}} GA_WORKFLOW=${{github.workflow}} GRAFANA_DASHBOARD="${{secrets.GRAFANA_GITHUB_ACTION_DASHBAORD_LINK}}" bash ${{github.workspace}}/.github/workflows/script/setup_dashboard.sh
 
     - name: Upload Dashboard Link
       uses: actions/upload-artifact@v3
