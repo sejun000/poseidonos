@@ -8,14 +8,19 @@ check_environment_variable()
     if [ -z ${GA_WORKFLOW+x} ]; then echo "GA_WORKFLOW is unset"; NOT_OK=1; fi
 
     if [ -z ${GRAFANA_DASHBOARD+x} ]; then echo "GRAFANA_DASHBOARD is unset"; NOT_OK=1; fi
+    
+    if [ -z ${ESTIMATED_EXECUTION_TIME+x} ]; then echo "ESTIMATED_EXECUTION_TIME is unset"; NOT_OK=1; fi
 
     if ! [ -z ${NOT_OK+x} ]; then exit 1; fi
 }
 
 make_dashboard_link()
 {
-    GRAFANA_DASHBOARD_DIRECT=$(echo ${GRAFANA_DASHBOARD}"&refresh=5s&var-ga_commit_hash=${GA_COMMIT_HASH}&var-ga_workflow=${GA_WORKFLOW}" | sed 's/#/%23/g')
+    START_TIME=$(( $(date +%s) * 1000 ))
+    END_TIME="${START_TIME}+$(( $(( ${ESTIMATED_EXECUTION_TIME} + 2000 )) * 1000))s"
 
+    GRAFANA_DASHBOARD_DIRECT=$(echo ${GRAFANA_DASHBOARD}"&refresh=10s&from=${START_TIME}&to=${END_TIME}&var-ga_commit_hash=${GA_COMMIT_HASH}&var-ga_workflow=${GA_WORKFLOW}" | sed 's/#/%23/g')
+    
     cat > ${POS_WORKING_DIR}/Dashboard.html <<-EOF
 		<html>
 			<body>
