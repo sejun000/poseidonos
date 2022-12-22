@@ -61,7 +61,7 @@ jobs:
       with:
         name: IO_Exception_CORE_DUMP
         path: |
-          ${{github.workspace}}/tool/dump/*.tar.gz*
+          ${{github.workspace}}/tool/debug_lib/*.tar.gz*
 
 
   Normal_IO_NPOR_SPOR_Test:
@@ -121,7 +121,7 @@ jobs:
       with:
         name: Normal_IO_NPOR_SPOR_CORE_DUMP
         path: |
-          ${{github.workspace}}/tool/dump/*.tar.gz*
+          ${{github.workspace}}/tool/debug_lib/*.tar.gz*
 
   Rebuild_SPOR_test:
     runs-on: VM
@@ -167,7 +167,7 @@ jobs:
       with:
         name: Rebuild_SPOR_CORE_DUMP
         path: |
-          ${{github.workspace}}/tool/dump/*.tar.gz*
+          ${{github.workspace}}/tool/debug_lib/*.tar.gz*
 
 
   Rebuild_Test:
@@ -214,7 +214,7 @@ jobs:
       with:
         name: Rebuild_CORE_DUMP
         path: |
-          ${{github.workspace}}/tool/dump/*.tar.gz*
+          ${{github.workspace}}/tool/debug_lib/*.tar.gz*
 
   Rebuild_RAID6_Test:
       runs-on: VM
@@ -268,7 +268,7 @@ jobs:
         with:
           name: Rebuild_RAID6_CORE_DUMP
           path: |
-            ${{github.workspace}}/tool/dump/*.tar.gz*
+            ${{github.workspace}}/tool/debug_lib/*.tar.gz*
 
   Rotational_Rebuild_Test:
     runs-on: VM
@@ -314,7 +314,7 @@ jobs:
       with:
         name: Rotational_Rebuild_CORE_DUMP
         path: |
-          ${{github.workspace}}/tool/dump/*.tar.gz*
+          ${{github.workspace}}/tool/debug_lib/*.tar.gz*
 
 
   Unit_Test:
@@ -402,7 +402,7 @@ jobs:
       with:
         name: Volume_CORE_DUMP
         path: |
-          ${{github.workspace}}/tool/dump/*.tar.gz*
+          ${{github.workspace}}/tool/debug_lib/*.tar.gz*
 
 
   WBT_IO_ST:

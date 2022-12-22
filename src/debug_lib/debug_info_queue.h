@@ -30,88 +30,79 @@
  *   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DUMP_SHARED_PTR_H_
-#define DUMP_SHARED_PTR_H_
+#ifndef DUMP_MODULE_H_
+#define DUMP_MODULE_H_
 
 #include <sys/time.h>
 #include <unistd.h>
 
-#include <atomic>
 #include <cstdint>
-#include <list>
 #include <memory>
 #include <mutex>
+#include <queue>
 #include <string>
-#include <unordered_map>
-#include <unordered_set>
 
-#include "src/dump/dump_module.h"
-#include "src/dump/dump_module.hpp"
-#include "src/lib/singleton.h"
-
-enum class DumpSharedPtrType
-{
-    UBIO,
-    IO_CONTEXT,
-    CALLBACK,
-    JOURNAL_IO_CONTEXT,
-    MAX_DUMP_PTR
-};
+#include "src/debug_lib/debug_info_queue.h"
+#include "src/debug_lib/dump_buffer.h"
 
 namespace pos
 {
-template<typename T, int>
-class DumpSharedPtr
+template<typename T>
+class DumpObject
 {
 public:
-    static void* operator new(std::size_t size);
-    static void operator delete(void* ptr);
-    static void operator delete(void* ptr, std::size_t size);
-    static void* operator new[](std::size_t size);
-    static void operator delete[](void* ptr);
-    static void operator delete[](void* ptr, std::size_t size);
-
-private:
-    static void* _New(std::size_t size);
-    static void _Delete(void* ptr);
+    DumpObject(void);
+    DumpObject(T& t, uint64_t userSpecific);
+    ~DumpObject(void);
+    T buffer;
+    uint64_t userSpecificData;
+    struct timeval date; // 8 byte
 };
 
-class T;
-
-template<typename T, int>
-class DumpSharedModule : public DumpModule<T>
+template<typename T>
+class DumpObjectPtr
 {
 public:
-    DumpSharedModule(std::string moduleName, bool defaultEnable);
-    ~DumpSharedModule(void) override;
-    std::unordered_map<uint64_t, DumpObject<T>> dumpMap;
-    int Add(T t, bool lock_enable = true);
-    int Delete(T t, bool lock_enable = true);
+    DumpObjectPtr(void);
+    DumpObjectPtr(T& t, uint64_t userSpecific);
+    ~DumpObjectPtr(void);
+    T buffer;
+    uint64_t userSpecificData;
+    struct timeval date; // 8 byte
 };
 
-class DumpSharedModuleInstanceEnable
+class DebugInfoQueueInstance
 {
 public:
-    static bool debugLevelEnable;
+    virtual void SetEnable(bool enable) = 0;
+    virtual bool IsEnable(void) = 0;
+    virtual uint64_t GetPoolSize(void) = 0;
 };
 
-template<typename T, int moduleNumber>
-class DumpSharedModuleInstance
+template<typename T>
+class DebugInfoQueue : public DebugInfoQueueInstance
 {
 public:
-    DumpSharedModuleInstance(void);
-    ~DumpSharedModuleInstance(void);
-    DumpSharedModule<T, moduleNumber>* DumpInstance(void);
+    DebugInfoQueue(void);
 
-private:
-    DumpSharedModule<T, moduleNumber>* dumpSharedInstance;
+    DebugInfoQueue(std::string moduleName,
+        uint32_t num, bool enable);
+    virtual ~DebugInfoQueue(void);
+    std::mutex dumpQueueLock;
+    int AddDebugInfo(T& t, uint64_t userSpecific, bool lock_enable = true);
+    void RegisterDebugInfoQueue(std::string moduleName, uint32_t num, bool enable);
+    virtual void SetEnable(bool enable);
+    virtual bool IsEnable(void);
+    virtual uint64_t GetPoolSize(void);
+
+    static const int MAX_ENTRIES_FOR_CALLBACK_ERROR = 10000; // temporary value
+
+protected:
+    bool isEnabled;
+    std::queue<DumpObject<T>> dumpQueue;
+    uint32_t entryBufSize;
+    uint32_t entryMaxNum;
 };
-
-template<typename T, int moduleNumber>
-using DumpSharedModuleInstanceSingleton =
-    Singleton<DumpSharedModuleInstance<T, moduleNumber>>;
-extern void* gDumpSharedModulePtr[static_cast<int>(DumpSharedPtrType::MAX_DUMP_PTR)];
 
 } // namespace pos
-
-#endif // DUMP_SHARED_PTR_H_
+#endif // DUMP_MODULE_H_

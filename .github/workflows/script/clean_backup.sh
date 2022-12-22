@@ -43,7 +43,7 @@ coreDump()
 {
     echo "Kill poseidonos to generate core dump files.."
     texecc pkill -11 poseidonos
-    cd $pos_working_dir/tool/dump/; sudo ./trigger_core_dump.sh crashed
+    cd $pos_working_dir/tool/debug_lib/; sudo ./trigger_core_dump.sh crashed
 }
 
 resetConfig()

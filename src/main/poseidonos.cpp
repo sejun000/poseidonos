@@ -154,7 +154,7 @@ Poseidonos::Terminate(void)
     QosManagerSingleton::ResetInstance();
     FlushCmdManagerSingleton::ResetInstance();
     SmartLogMgrSingleton::ResetInstance();
-    delete debugInfo;
+    delete singletonInfo;
     IOSubmitHandler* submitHandler = static_cast<IOSubmitHandler*>(IIOSubmitHandler::GetInstance());
     delete submitHandler;
     if (ioRecoveryEventFactory != nullptr)
@@ -251,9 +251,9 @@ Poseidonos::_InitSpdk(int argc, char** argv)
 void
 Poseidonos::_InitDebugInfo(void)
 {
-    debugInfo = new DebugInfo();
-    debugInfoUpdater = debugInfo;
-    debugInfo->Update();
+    singletonInfo = new SingletonInfo();
+    singletonInfoUpdater = singletonInfo;
+    singletonInfo->Update();
     int ret;
     ret = system("mkdir -p /etc/pos/core");
     if (ret != 0)

@@ -94,7 +94,7 @@ jobs:
       with:
         name: Three_Days_CORE_DUMP
         path: |
-          ${{github.workspace}}/tool/dump/*.tar.gz*
+          ${{github.workspace}}/tool/debug_lib/*.tar.gz*
 
   Call_Package_Upload:
     needs: Three_Days_Test

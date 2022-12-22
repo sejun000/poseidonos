@@ -30,37 +30,39 @@
  *   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DUMP_BUFFER_H_
-#define DUMP_BUFFER_H_
+#ifndef DUMP_MANAGER_H_
+#define DUMP_MANAGER_H_
 
-#include "dump_module.h"
+#include <cstdint>
+#include <mutex>
+#include <string>
+#include <unordered_map>
 
-#include <memory>
+#include "src/debug_lib/debug_info_queue.h"
+#include "src/lib/singleton.h"
 
 namespace pos
 {
-class AbstractDumpModule;
+#define MAX_MEMORY_SIZE_IN_DUMP (20 * 1024)
 
-struct DumpBufferDeleter
-{
-    void
-    operator()(uint8_t* ptr)
-    {
-        delete[] ptr;
-    }
-};
+using namespace std;
 
-class DumpBuffer
+class DumpManager
 {
 public:
-    DumpBuffer(void);
-    DumpBuffer(void* inputPtr, size_t size, AbstractDumpModule* module);
-    ~DumpBuffer(void);
+    DumpManager(void);
+    ~DumpManager(void);
+    int RegisterDump(string moduleName, DebugInfoQueueInstance* dumpModule);
+    int SetEnableModuleByCLI(string moduleStr, bool enable);
 
 private:
-    std::shared_ptr<uint8_t> ptr;
-    AbstractDumpModule* dumpModule;
+    unordered_map<string, DebugInfoQueueInstance*> dumpModules;
+    uint32_t usedMemorySize;
+    mutex dumpManagerMutex;
 };
+
+using DumpManagerSingleton = Singleton<DumpManager>;
+
 } // namespace pos
 
-#endif // DUMP_BUFFER_H_
+#endif // DUMP_MANAGER_H_

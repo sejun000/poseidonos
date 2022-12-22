@@ -92,7 +92,7 @@ def get_file_size(arrayId, fd):
 
 def start_core_dump(trigger_option):
     TEST_LOG.print_err("* Try to dump core file. (option: {})".format(trigger_option))
-    core_dump_cmd = TEST.pos_root + "/tool/dump/trigger_core_dump.sh"
+    core_dump_cmd = TEST.pos_root + "/tool/debug_lib/trigger_core_dump.sh"
     subprocess.call(core_dump_cmd + " " + trigger_option, shell=True)
 
 

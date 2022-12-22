@@ -30,18 +30,33 @@
  *   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "src/debug/debug_info_updater.h"
+#include <cstring>
+
+#include "debug_info_queue.h"
 
 namespace pos
 {
-DebugInfoUpdater* debugInfoUpdater;
-
-// Exclude destructor of abstract class from function coverage report to avoid known issues in gcc/gcov
-// LCOV_EXCL_START
-DebugInfoUpdater::~DebugInfoUpdater(void)
+DumpBuffer::DumpBuffer(void)
+: ptr(nullptr),
+  dumpModule(nullptr)
 {
 }
-// LCOV_EXCL_STOP
+
+DumpBuffer::DumpBuffer(void* inputPtr, size_t size, DebugInfoQueueInstance* module)
+: ptr(nullptr),
+  dumpModule(nullptr)
+{
+    if (module->IsEnable())
+    {
+        dumpModule = module;
+        ptr = std::shared_ptr<uint8_t>(new uint8_t[size + 1], DumpBufferDeleter());
+        memcpy(ptr.get(), inputPtr, size);
+        memset(ptr.get() + size, 0, 1);
+    }
+}
+
+DumpBuffer::~DumpBuffer(void)
+{
+}
 
 } // namespace pos
-

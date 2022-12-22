@@ -30,18 +30,18 @@
  *   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "src/singleton_info/singleton_info_updater.h"
 
 namespace pos
 {
+SingletonInfoUpdater* singletonInfoUpdater;
 
-class DebugInfoUpdater
+// Exclude destructor of abstract class from function coverage report to avoid known issues in gcc/gcov
+// LCOV_EXCL_START
+SingletonInfoUpdater::~SingletonInfoUpdater(void)
 {
-public:
-    virtual ~DebugInfoUpdater(void);
-    virtual void Update(void) = 0;
-};
+}
+// LCOV_EXCL_STOP
 
-extern DebugInfoUpdater* debugInfoUpdater;
 } // namespace pos
 

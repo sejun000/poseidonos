@@ -46,7 +46,7 @@ coreDump()
 {
     echo "Kill poseidonos to generate core dump files.."
     texecc pkill -11 poseidonos
-    sshpass -p bamboo ssh -q -tt root@${target_ip} "cd $pos_working_dir/tool/dump/; sudo ./trigger_core_dump.sh crashed"
+    sshpass -p bamboo ssh -q -tt root@${target_ip} "cd $pos_working_dir/tool/debug_lib/; sudo ./trigger_core_dump.sh crashed"
 
     if [ -d $pos_core/$plan_name/$test_name/$test_rev ]
     then
@@ -56,11 +56,11 @@ coreDump()
     fi
 
     echo "Copying core dump files to service server $pos_core/$plan_name/$test_name/$test_rev"
-    sshpass -p bamboo scp -r root@${target_ip}:/$pos_working_dir/tool/dump/*.tar.gz* $pos_core/$plan_name/$test_name/$test_rev
+    sshpass -p bamboo scp -r root@${target_ip}:/$pos_working_dir/tool/debug_lib/*.tar.gz* $pos_core/$plan_name/$test_name/$test_rev
 
     echo "Deleting core dump files in ${target_ip} since files are copied to service server"
     texecc rm /etc/pos/core/*
-    texecc rm $pos_working_dir/tool/dump/*.tar.gz*
+    texecc rm $pos_working_dir/tool/debug_lib/*.tar.gz*
 }
 
 backupLog()
