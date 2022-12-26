@@ -854,7 +854,7 @@ _LogCliResponse(const google::protobuf::Message* reply, const grpc::Status statu
     MessageToJsonString(*reply, &replyJson, printOptions);
 
     pos::debugCliInfoMaker->info.sendReceive = "SendCLI";
-    pos::debugCliInfoMaker->info.message = status.error_details() + " " + status.error_message();
+    pos::debugCliInfoMaker->info.message = replyJson;
     pos::debugCliInfoMaker->AddDebugInfo(status.error_code());
     logger()->SetCommand(command);
     POS_TRACE_TRACE(EID(CLI_MSG_SENT), "response: {}, gRPC_error_code: {}, gRPC_error_details: {}, gRPC_error_essage: {}",
